@@ -144,7 +144,7 @@
         <div id="startScreen">
             <img src="https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6841f1ef48162633d6cf95f4_FLAPPY-TRUMPSTEIN-05-06-2025.png" alt="Flappy Trumpstein Logo" style="max-width: 300px; height: auto; margin-bottom: 20px;">
             <div class="instructions">
-                <p>Avoid the Einstein Lists!</p>
+                <p>Avoid the Epstein Lists!</p>
                 <p>Click or press SPACE to flap</p>
             </div>
             <button class="btn" onclick="startGame()">Start Game</button>
@@ -152,11 +152,11 @@
         
         <div id="gameOverScreen">
             <h1>Game Over!</h1>
-            <p style="font-size: 1.3em; margin: 20px 0;">Ahh, you were caught on the Einstein List!</p>
+            <p style="font-size: 1.3em; margin: 20px 0;">Ahh, you were caught on the Epstein List!</p>
             <p id="finalScore" style="font-size: 1.5em; color: #FFD700;">Score: 0</p>
             <button class="btn" onclick="restartGame()">Play Again</button>
             <div class="social-buttons">
-                <a href="https://twitter.com/intent/tweet?text=I%20just%20played%20Flappy%20Trumpstein%20and%20got%20caught%20on%20the%20Einstein%20List!%20%40trumpstein.xyz%20%26%20pump.fun" class="social-btn twitter-btn" target="_blank">Share on Twitter</a>
+                <a href="https://twitter.com/intent/tweet?text=I%20just%20played%20Flappy%20Trumpstein%20and%20got%20caught%20on%20the%20Epstein%20List!%20%40trumpstein.xyz%20%26%20pump.fun" class="social-btn twitter-btn" target="_blank">Share on Twitter</a>
                 <a href="https://pump.fun" class="social-btn pump-btn" target="_blank">pump.fun</a>
             </div>
         </div>
@@ -268,7 +268,7 @@
                 ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
             }
 
-            // Draw obstacles (Einstein Lists) - make them look like yellow lists with scribbles
+            // Draw obstacles (Epstein Lists) - make them look like yellow lists with scribbles
             for (let obstacle of obstacles) {
                 // Draw yellow background for lists
                 ctx.fillStyle = '#FFEB3B';
@@ -324,16 +324,16 @@
                     }
                 }
                 
-                // Add "EINSTEIN LIST" text
+                // Add "Epstein LIST" text
                 ctx.fillStyle = '#D32F2F';
                 ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
                 if (obstacle.topHeight > 30) {
-                    ctx.fillText('EINSTEIN', obstacle.x + obstacleWidth/2, obstacle.topHeight - 15);
+                    ctx.fillText('Epstein', obstacle.x + obstacleWidth/2, obstacle.topHeight - 15);
                     ctx.fillText('LIST', obstacle.x + obstacleWidth/2, obstacle.topHeight - 5);
                 }
                 if (canvas.height - obstacle.topHeight - obstacleGap > 30) {
-                    ctx.fillText('EINSTEIN', obstacle.x + obstacleWidth/2, obstacle.topHeight + obstacleGap + 20);
+                    ctx.fillText('Epstein', obstacle.x + obstacleWidth/2, obstacle.topHeight + obstacleGap + 20);
                     ctx.fillText('LIST', obstacle.x + obstacleWidth/2, obstacle.topHeight + obstacleGap + 35);
                 }
             }
