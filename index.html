@@ -174,8 +174,8 @@
             width: 60,
             height: 60,
             velocity: 0,
-            gravity: 0.3,
-            jumpStrength: -8,
+            gravity: 0.15,
+            jumpStrength: -5,
             image: new Image()
         };
 
@@ -185,7 +185,7 @@
         // Obstacles array
         let obstacles = [];
         const obstacleWidth = 80;
-        const obstacleGap = 200;
+        const obstacleGap = 300;
 
         // Game loop
         function gameLoop() {
@@ -232,10 +232,10 @@
             }
 
             // Add new obstacles
-            if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - 300) {
+            if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - 400) {
                 obstacles.push({
                     x: canvas.width,
-                    topHeight: Math.random() * (canvas.height - obstacleGap - 200) + 100,
+                    topHeight: Math.random() * (canvas.height - obstacleGap - 300) + 150,
                     passed: false
                 });
             }
@@ -257,21 +257,74 @@
                 ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
             }
 
-            // Draw obstacles (Einstein Lists)
-            ctx.fillStyle = '#8B4513';
+            // Draw obstacles (Einstein Lists) - make them look like yellow lists with scribbles
             for (let obstacle of obstacles) {
+                // Draw yellow background for lists
+                ctx.fillStyle = '#FFEB3B';
                 // Top obstacle
                 ctx.fillRect(obstacle.x, 0, obstacleWidth, obstacle.topHeight);
                 // Bottom obstacle
                 ctx.fillRect(obstacle.x, obstacle.topHeight + obstacleGap, obstacleWidth, canvas.height - obstacle.topHeight - obstacleGap);
                 
-                // Add "Einstein List" text
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = '12px Arial';
+                // Add border to make it look more like paper
+                ctx.strokeStyle = '#FFC107';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(obstacle.x, 0, obstacleWidth, obstacle.topHeight);
+                ctx.strokeRect(obstacle.x, obstacle.topHeight + obstacleGap, obstacleWidth, canvas.height - obstacle.topHeight - obstacleGap);
+                
+                // Add scribbled lines to look like a list
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                
+                // Top list scribbles
+                for (let i = 0; i < obstacle.topHeight - 20; i += 25) {
+                    if (i + 15 < obstacle.topHeight) {
+                        ctx.beginPath();
+                        ctx.moveTo(obstacle.x + 10, i + 15);
+                        ctx.lineTo(obstacle.x + obstacleWidth - 10, i + 15);
+                        ctx.stroke();
+                        
+                        // Add some wavy scribbles
+                        ctx.beginPath();
+                        ctx.moveTo(obstacle.x + 15, i + 20);
+                        ctx.quadraticCurveTo(obstacle.x + 30, i + 18, obstacle.x + 45, i + 20);
+                        ctx.quadraticCurveTo(obstacle.x + 60, i + 22, obstacle.x + obstacleWidth - 15, i + 20);
+                        ctx.stroke();
+                    }
+                }
+                
+                // Bottom list scribbles
+                let bottomStart = obstacle.topHeight + obstacleGap + 15;
+                for (let i = bottomStart; i < canvas.height - 20; i += 25) {
+                    if (i + 5 < canvas.height) {
+                        ctx.beginPath();
+                        ctx.moveTo(obstacle.x + 10, i);
+                        ctx.lineTo(obstacle.x + obstacleWidth - 10, i);
+                        ctx.stroke();
+                        
+                        // Add some wavy scribbles
+                        if (i + 5 < canvas.height) {
+                            ctx.beginPath();
+                            ctx.moveTo(obstacle.x + 15, i + 5);
+                            ctx.quadraticCurveTo(obstacle.x + 30, i + 3, obstacle.x + 45, i + 5);
+                            ctx.quadraticCurveTo(obstacle.x + 60, i + 7, obstacle.x + obstacleWidth - 15, i + 5);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                // Add "EINSTEIN LIST" text
+                ctx.fillStyle = '#D32F2F';
+                ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText('EINSTEIN', obstacle.x + obstacleWidth/2, obstacle.topHeight - 10);
-                ctx.fillText('LIST', obstacle.x + obstacleWidth/2, obstacle.topHeight + obstacleGap + 20);
-                ctx.fillStyle = '#8B4513';
+                if (obstacle.topHeight > 30) {
+                    ctx.fillText('EINSTEIN', obstacle.x + obstacleWidth/2, obstacle.topHeight - 15);
+                    ctx.fillText('LIST', obstacle.x + obstacleWidth/2, obstacle.topHeight - 5);
+                }
+                if (canvas.height - obstacle.topHeight - obstacleGap > 30) {
+                    ctx.fillText('EINSTEIN', obstacle.x + obstacleWidth/2, obstacle.topHeight + obstacleGap + 20);
+                    ctx.fillText('LIST', obstacle.x + obstacleWidth/2, obstacle.topHeight + obstacleGap + 35);
+                }
             }
         }
 
