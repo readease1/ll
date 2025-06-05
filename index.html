@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Trumpstein</title>
+    <link rel="icon" type="image/png" href="https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6841f1ef48162633d6cf95f4_FLAPPY-TRUMPSTEIN-05-06-2025.png">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #87CEEB, #98FB98);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 100%);
+            border: 3px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        #gameCanvas {
+            display: block;
+            background: transparent;
+        }
+
+        #startScreen, #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+        }
+
+        #gameOverScreen {
+            display: none;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            color: #FFD700;
+        }
+
+        .btn {
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background: #FF5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 2em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 5;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-btn {
+            background: #4267B2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .twitter-btn {
+            background: #1DA1F2;
+        }
+
+        .pump-btn {
+            background: #FF4500;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .instructions {
+            margin: 20px 0;
+            font-size: 1.1em;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <div id="score">Score: 0</div>
+        
+        <div id="startScreen">
+            <img src="https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6841f1ef48162633d6cf95f4_FLAPPY-TRUMPSTEIN-05-06-2025.png" alt="Flappy Trumpstein Logo" style="max-width: 300px; height: auto; margin-bottom: 20px;">
+            <div class="instructions">
+                <p>Avoid the Einstein Lists!</p>
+                <p>Click or press SPACE to flap</p>
+            </div>
+            <button class="btn" onclick="startGame()">Start Game</button>
+        </div>
+        
+        <div id="gameOverScreen">
+            <h1>Game Over!</h1>
+            <p style="font-size: 1.3em; margin: 20px 0;">Ahh, you were caught on the Einstein List!</p>
+            <p id="finalScore" style="font-size: 1.5em; color: #FFD700;">Score: 0</p>
+            <button class="btn" onclick="restartGame()">Play Again</button>
+            <div class="social-buttons">
+                <a href="https://twitter.com/intent/tweet?text=I%20just%20played%20Flappy%20Trumpstein%20and%20got%20caught%20on%20the%20Einstein%20List!" class="social-btn twitter-btn" target="_blank">🐦 Share on Twitter</a>
+                <a href="https://pump.fun" class="social-btn pump-btn" target="_blank">🚀 Pump.fun</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const finalScoreElement = document.getElementById('finalScore');
+
+        let gameState = 'start'; // 'start', 'playing', 'gameOver'
+        let score = 0;
+        let gameSpeed = 2;
+
+        // Bird object
+        const bird = {
+            x: 80,
+            y: 250,
+            width: 30,
+            height: 30,
+            velocity: 0,
+            gravity: 0.5,
+            jumpStrength: -10,
+            color: '#FFD700'
+        };
+
+        // Obstacles array
+        let obstacles = [];
+        const obstacleWidth = 60;
+        const obstacleGap = 150;
+
+        // Game loop
+        function gameLoop() {
+            if (gameState === 'playing') {
+                update();
+                draw();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update() {
+            // Update bird
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
+
+            // Check ground collision
+            if (bird.y + bird.height > canvas.height || bird.y < 0) {
+                gameOver();
+            }
+
+            // Update obstacles
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= gameSpeed;
+
+                // Check collision
+                if (bird.x < obstacles[i].x + obstacleWidth &&
+                    bird.x + bird.width > obstacles[i].x &&
+                    (bird.y < obstacles[i].topHeight || 
+                     bird.y + bird.height > obstacles[i].topHeight + obstacleGap)) {
+                    gameOver();
+                }
+
+                // Check if bird passed obstacle
+                if (!obstacles[i].passed && bird.x > obstacles[i].x + obstacleWidth) {
+                    obstacles[i].passed = true;
+                    score++;
+                    scoreElement.textContent = `Score: ${score}`;
+                }
+
+                // Remove obstacles that are off screen
+                if (obstacles[i].x + obstacleWidth < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+
+            // Add new obstacles
+            if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - 200) {
+                obstacles.push({
+                    x: canvas.width,
+                    topHeight: Math.random() * (canvas.height - obstacleGap - 100) + 50,
+                    passed: false
+                });
+            }
+        }
+
+        function draw() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw clouds
+            drawClouds();
+
+            // Draw bird
+            ctx.fillStyle = bird.color;
+            ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+            
+            // Add simple bird features
+            ctx.fillStyle = '#FF6B6B';
+            ctx.fillRect(bird.x + 25, bird.y + 10, 8, 5); // beak
+            ctx.fillStyle = '#000';
+            ctx.fillRect(bird.x + 20, bird.y + 8, 3, 3); // eye
+
+            // Draw obstacles (Einstein Lists)
+            ctx.fillStyle = '#8B4513';
+            for (let obstacle of obstacles) {
+                // Top obstacle
+                ctx.fillRect(obstacle.x, 0, obstacleWidth, obstacle.topHeight);
+                // Bottom obstacle
+                ctx.fillRect(obstacle.x, obstacle.topHeight + obstacleGap, obstacleWidth, canvas.height - obstacle.topHeight - obstacleGap);
+                
+                // Add "Einstein List" text
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('EINSTEIN', obstacle.x + obstacleWidth/2, obstacle.topHeight - 10);
+                ctx.fillText('LIST', obstacle.x + obstacleWidth/2, obstacle.topHeight + obstacleGap + 20);
+                ctx.fillStyle = '#8B4513';
+            }
+        }
+
+        function drawClouds() {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.arc(100, 100, 30, 0, Math.PI * 2);
+            ctx.arc(120, 100, 35, 0, Math.PI * 2);
+            ctx.arc(140, 100, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(300, 150, 25, 0, Math.PI * 2);
+            ctx.arc(315, 150, 30, 0, Math.PI * 2);
+            ctx.arc(330, 150, 25, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function jump() {
+            if (gameState === 'playing') {
+                bird.velocity = bird.jumpStrength;
+            }
+        }
+
+        function startGame() {
+            gameState = 'playing';
+            startScreen.style.display = 'none';
+            gameOverScreen.style.display = 'none';
+            resetGame();
+        }
+
+        function gameOver() {
+            gameState = 'gameOver';
+            finalScoreElement.textContent = `Score: ${score}`;
+            gameOverScreen.style.display = 'flex';
+        }
+
+        function restartGame() {
+            gameOverScreen.style.display = 'none';
+            startGame();
+        }
+
+        function resetGame() {
+            bird.y = 250;
+            bird.velocity = 0;
+            obstacles = [];
+            score = 0;
+            scoreElement.textContent = `Score: ${score}`;
+        }
+
+        // Event listeners
+        canvas.addEventListener('click', jump);
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                jump();
+            }
+        });
+
+        // Start the game loop
+        gameLoop();
+    </script>
+</body>
+</html>
