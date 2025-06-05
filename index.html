@@ -196,7 +196,7 @@
         // Obstacles array
         let obstacles = [];
         const obstacleWidth = 80;
-        const obstacleGap = 300;
+        const obstacleGap = 500;
 
         // Game loop
         function gameLoop() {
@@ -243,10 +243,10 @@
             }
 
             // Add new obstacles
-            if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - 400) {
+            if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - 600) {
                 obstacles.push({
                     x: canvas.width,
-                    topHeight: Math.random() * (canvas.height - obstacleGap - 300) + 150,
+                    topHeight: Math.random() * (canvas.height - obstacleGap - 400) + 200,
                     passed: false
                 });
             }
