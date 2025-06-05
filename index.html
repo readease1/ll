@@ -11,22 +11,17 @@
             padding: 0;
             background: linear-gradient(135deg, #87CEEB, #98FB98);
             font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             overflow: hidden;
+            width: 100vw;
+            height: 100vh;
         }
 
         #gameContainer {
             position: relative;
-            width: 400px;
-            height: 600px;
+            width: 100vw;
+            height: 100vh;
             background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 100%);
-            border: 3px solid #333;
-            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         #gameCanvas {
@@ -132,7 +127,7 @@
 </head>
 <body>
     <div id="gameContainer">
-        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <canvas id="gameCanvas"></canvas>
         <div id="score">Score: 0</div>
         
         <div id="startScreen">
@@ -164,26 +159,30 @@
         const gameOverScreen = document.getElementById('gameOverScreen');
         const finalScoreElement = document.getElementById('finalScore');
 
+        // Set canvas to fullscreen
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
         let gameState = 'start'; // 'start', 'playing', 'gameOver'
         let score = 0;
-        let gameSpeed = 2;
+        let gameSpeed = 3;
 
         // Bird object
         const bird = {
-            x: 80,
-            y: 250,
-            width: 30,
-            height: 30,
+            x: canvas.width * 0.2,
+            y: canvas.height / 2,
+            width: 50,
+            height: 50,
             velocity: 0,
-            gravity: 0.5,
-            jumpStrength: -10,
+            gravity: 0.8,
+            jumpStrength: -15,
             color: '#FFD700'
         };
 
         // Obstacles array
         let obstacles = [];
-        const obstacleWidth = 60;
-        const obstacleGap = 150;
+        const obstacleWidth = 80;
+        const obstacleGap = 200;
 
         // Game loop
         function gameLoop() {
@@ -230,10 +229,10 @@
             }
 
             // Add new obstacles
-            if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - 200) {
+            if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - 300) {
                 obstacles.push({
                     x: canvas.width,
-                    topHeight: Math.random() * (canvas.height - obstacleGap - 100) + 50,
+                    topHeight: Math.random() * (canvas.height - obstacleGap - 200) + 100,
                     passed: false
                 });
             }
@@ -246,15 +245,21 @@
             // Draw clouds
             drawClouds();
 
-            // Draw bird
-            ctx.fillStyle = bird.color;
+            // Draw bird - more detailed design
+            ctx.fillStyle = '#FF6B35';
             ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
             
-            // Add simple bird features
-            ctx.fillStyle = '#FF6B6B';
-            ctx.fillRect(bird.x + 25, bird.y + 10, 8, 5); // beak
+            // Bird body gradient effect
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(bird.x + 5, bird.y + 5, bird.width - 10, bird.height - 10);
+            
+            // Bird features
+            ctx.fillStyle = '#FF4500';
+            ctx.fillRect(bird.x + bird.width - 5, bird.y + bird.height/2 - 3, 15, 8); // beak
             ctx.fillStyle = '#000';
-            ctx.fillRect(bird.x + 20, bird.y + 8, 3, 3); // eye
+            ctx.fillRect(bird.x + bird.width - 15, bird.y + 12, 6, 6); // eye
+            ctx.fillStyle = '#FFF';
+            ctx.fillRect(bird.x + bird.width - 13, bird.y + 14, 2, 2); // eye highlight
 
             // Draw obstacles (Einstein Lists)
             ctx.fillStyle = '#8B4513';
@@ -276,16 +281,19 @@
 
         function drawClouds() {
             ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            // Scale clouds for fullscreen
+            const cloudScale = canvas.width / 400;
+            
             ctx.beginPath();
-            ctx.arc(100, 100, 30, 0, Math.PI * 2);
-            ctx.arc(120, 100, 35, 0, Math.PI * 2);
-            ctx.arc(140, 100, 30, 0, Math.PI * 2);
+            ctx.arc(100 * cloudScale, 100 * cloudScale, 30 * cloudScale, 0, Math.PI * 2);
+            ctx.arc(120 * cloudScale, 100 * cloudScale, 35 * cloudScale, 0, Math.PI * 2);
+            ctx.arc(140 * cloudScale, 100 * cloudScale, 30 * cloudScale, 0, Math.PI * 2);
             ctx.fill();
 
             ctx.beginPath();
-            ctx.arc(300, 150, 25, 0, Math.PI * 2);
-            ctx.arc(315, 150, 30, 0, Math.PI * 2);
-            ctx.arc(330, 150, 25, 0, Math.PI * 2);
+            ctx.arc(300 * cloudScale, 150 * cloudScale, 25 * cloudScale, 0, Math.PI * 2);
+            ctx.arc(315 * cloudScale, 150 * cloudScale, 30 * cloudScale, 0, Math.PI * 2);
+            ctx.arc(330 * cloudScale, 150 * cloudScale, 25 * cloudScale, 0, Math.PI * 2);
             ctx.fill();
         }
 
@@ -314,12 +322,20 @@
         }
 
         function resetGame() {
-            bird.y = 250;
+            bird.x = canvas.width * 0.2;
+            bird.y = canvas.height / 2;
             bird.velocity = 0;
             obstacles = [];
             score = 0;
             scoreElement.textContent = `Score: ${score}`;
         }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            bird.x = canvas.width * 0.2;
+        });
 
         // Event listeners
         canvas.addEventListener('click', jump);
