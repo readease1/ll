@@ -171,13 +171,16 @@
         const bird = {
             x: canvas.width * 0.2,
             y: canvas.height / 2,
-            width: 50,
-            height: 50,
+            width: 60,
+            height: 60,
             velocity: 0,
             gravity: 0.8,
             jumpStrength: -15,
-            color: '#FFD700'
+            image: new Image()
         };
+
+        // Load bird image
+        bird.image.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6840c183df98b478b3db36a1_pill.png';
 
         // Obstacles array
         let obstacles = [];
@@ -245,21 +248,14 @@
             // Draw clouds
             drawClouds();
 
-            // Draw bird - more detailed design
-            ctx.fillStyle = '#FF6B35';
-            ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
-            
-            // Bird body gradient effect
-            ctx.fillStyle = '#FFD700';
-            ctx.fillRect(bird.x + 5, bird.y + 5, bird.width - 10, bird.height - 10);
-            
-            // Bird features
-            ctx.fillStyle = '#FF4500';
-            ctx.fillRect(bird.x + bird.width - 5, bird.y + bird.height/2 - 3, 15, 8); // beak
-            ctx.fillStyle = '#000';
-            ctx.fillRect(bird.x + bird.width - 15, bird.y + 12, 6, 6); // eye
-            ctx.fillStyle = '#FFF';
-            ctx.fillRect(bird.x + bird.width - 13, bird.y + 14, 2, 2); // eye highlight
+            // Draw bird - use the pill image
+            if (bird.image.complete) {
+                ctx.drawImage(bird.image, bird.x, bird.y, bird.width, bird.height);
+            } else {
+                // Fallback while image loads
+                ctx.fillStyle = '#FF6B35';
+                ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+            }
 
             // Draw obstacles (Einstein Lists)
             ctx.fillStyle = '#8B4513';
