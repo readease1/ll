@@ -86,6 +86,16 @@
             z-index: 5;
         }
 
+        #ca-info {
+            position: absolute;
+            top: 70px;
+            left: 20px;
+            font-size: 1.2em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 5;
+        }
+
         .social-buttons {
             display: flex;
             gap: 15px;
@@ -106,7 +116,7 @@
         }
 
         .twitter-btn {
-            background: #1DA1F2;
+            background: #22C55E;
         }
 
         .pump-btn {
@@ -129,6 +139,7 @@
     <div id="gameContainer">
         <canvas id="gameCanvas"></canvas>
         <div id="score">Score: 0</div>
+        <div id="ca-info">CA: TBA</div>
         
         <div id="startScreen">
             <img src="https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6841f1ef48162633d6cf95f4_FLAPPY-TRUMPSTEIN-05-06-2025.png" alt="Flappy Trumpstein Logo" style="max-width: 300px; height: auto; margin-bottom: 20px;">
@@ -145,8 +156,8 @@
             <p id="finalScore" style="font-size: 1.5em; color: #FFD700;">Score: 0</p>
             <button class="btn" onclick="restartGame()">Play Again</button>
             <div class="social-buttons">
-                <a href="https://twitter.com/intent/tweet?text=I%20just%20played%20Flappy%20Trumpstein%20and%20got%20caught%20on%20the%20Einstein%20List!" class="social-btn twitter-btn" target="_blank">🐦 Share on Twitter</a>
-                <a href="https://pump.fun" class="social-btn pump-btn" target="_blank">🚀 Pump.fun</a>
+                <a href="https://twitter.com/intent/tweet?text=I%20just%20played%20Flappy%20Trumpstein%20and%20got%20caught%20on%20the%20Einstein%20List!%20%40trumpstein.xyz%20%26%20pump.fun" class="social-btn twitter-btn" target="_blank">Share on Twitter</a>
+                <a href="https://pump.fun" class="social-btn pump-btn" target="_blank">pump.fun</a>
             </div>
         </div>
     </div>
